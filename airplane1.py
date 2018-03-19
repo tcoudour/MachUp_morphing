@@ -12,8 +12,6 @@ area = long_ref * lat_ref
 
 all_results = []
 
-
-
 def solve_once(aileron=0, elevator=0, rudder=0, flap=0, Vmag=10, alpha=0, beta=0, rho=0.0023769):
 
 	control_state = {
@@ -57,12 +55,32 @@ def solve_once(aileron=0, elevator=0, rudder=0, flap=0, Vmag=10, alpha=0, beta=0
 
 def solve_all(data, min, max, points):
 	
-	values_list = np.linspace(min,max, points)
-	for i in values_list :
+	if not (data in ['aileron', 'elevator', 'rudder', 'flap', 'Vmag', 'alpha', 'beta', 'rho']) :
+		print 'Wrong data name'
+		return 1
 		
+	all_results = []
+	values_list = np.linspace(min, max, points)
+	for i in values_list :
+		if data == 'aileron' :
+			solve_once(aileron = i)
+		if data == 'elevator' :
+			solve_once(elevator = i)
+		if data == 'rudder' :
+			solve_once(rudder = i)
+		if data == 'flap' :
+			solve_once(flap = i)
+		if data == 'Vmag' :
+			solve_once(Vmag = i)
+		if data == 'alpha' :
+			solve_once(alpha = i)
+		if data == 'beta' :
+			solve_once(beta = i)
+		if data == 'rho' :
+			solve_once(rho = i)
+	return 0
 
-	
-def plot_data(*data): # prints a plot of a certain data against alpha
+def plot_data(data): # prints a plot of a list of data against another (['CL', 'alpha'] gives CL against alpha)
 	i = 1
 	for d in data:
 		d[0] = d[0].upper() #uppercase
@@ -85,15 +103,26 @@ def plot_data(*data): # prints a plot of a certain data against alpha
 		plt.plot(list_data_x, list_data_y)
 		plt.xlabel(d[1])
 		plt.ylabel(d[0])
-		plt.title(d[0] + ' against ' + d[1] + ', ' + str(alpha_values) + ' points')
+		plt.title(d[0] + ' against ' + d[1] + ', ' + str(len(list_data_x)) + ' points')
 		plt.grid(True)
 	plt.show()
 	return 0	
 
+def study(param, min, max, points, *data): #Calculates and display results for chosen parameter
+	#Parameter can be 'aileron', 'elevator', 'rudder', 'flap', 'Vmag', 'alpha', 'beta', 'rho'
+	#Data can be 'CL', 'CD', 'FL', 'FD', 'FS', 'FX', 'FY', 'FZ', 'MX', 'MY', 'MZ'
+	#You can input multiple data
+	solve_all(param, min, max, points)
+	plots_list = []
+	for d in data :
+		plots_list.append([d, param])
+	plot_data(plots_list)
+	
+	
+	
+study('alpha', 1, 20, 100, 'CL', 'CD')
 
 
-
-plot_data(['CL','alpha'], ['CD','alpha'])
 
 
 
