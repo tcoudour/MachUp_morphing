@@ -13,6 +13,7 @@ area = long_ref * lat_ref
 all_results = []
 
 
+
 def solve_once(aileron=0, elevator=0, rudder=0, flap=0, Vmag=10, alpha=0, beta=0, rho=0.0023769):
 
 	control_state = {
