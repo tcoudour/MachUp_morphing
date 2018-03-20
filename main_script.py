@@ -42,15 +42,17 @@ def solve_once(aileron=aileron_def, elevator=elevator_def, rudder=rudder_def, fl
 	}
 	#prop_state = {"J": 0.25}
 
+	
 	results = muAirplane.solve(aero_state = aero_state,
 							   control_state = control_state,
 							   # prop_state = prop_state,
-							   # filename = 'results1.json'
-							   ) # output file
+							   # filename = 'results1.json' # output file
+							   ) 
 
 	# Calculate Lift and Drag coefficients
 	results['CL'] = (2*results['FL'])/(aero_state['rho']*(aero_state['V_mag']**2)*area)
 	results['CD'] = (2*results['FD'])/(aero_state['rho']*(aero_state['V_mag']**2)*area)
+	results['L/D'] = results['CL'] / results['CD']
 		
 	# Save parameters with results
 	results['AILERON'] = control_state['aileron']
@@ -73,11 +75,21 @@ def solve_once(aileron=aileron_def, elevator=elevator_def, rudder=rudder_def, fl
 	results['ROOT_CHORD'] = muAirplane.myairplane._wings['Wing_1']._left_segment._dimensions['root_chord']
 	results['YOFFSET'] = muAirplane.myairplane._wings['Wing_1']._left_segment._dimensions['yoffset']
 	
-	all_results.append(results) # Contains FL, FD, FS, FX, FY, FZ, MX, MY, MZ; CL, CD; control parameters, aero parameters, wing geometry
+	# Save airfoil data
+	results['ALPHA_L0'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['alpha_L0']
+	results['CL_ALPHA'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['CL_alpha']
+	results['CM_L0'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['Cm_L0']
+	results['CM_ALPHA'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['Cm_alpha']
+	results['CD0'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['CD_0']
+	results['CD0_L'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['CD_L']
+	results['CD0_L2'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['CD_L2']
+	results['CL_MAX'] = muAirplane.myairplane._wings['Wing_1'].airfoil(0)._properties['CL_max']
+	
+	all_results.append(results) # Contains FL, FD, FS, FX, FY, FZ, MX, MY, MZ; CL, CD, L/D; control parameters, aero parameters, wing geometry, airfoil
 	
 	return 0;
 
-def update_geometry(param, value) :
+def update_geometry(param, value) : #Modifies the .json input file to change the geometry
 	global muAirplane
 	if not (param in ['sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset']) :
 		print 'Wrong parameter name'
@@ -91,10 +103,28 @@ def update_geometry(param, value) :
 	muAirplane = MU.MachUp(filename)
 	return 0
 
+def update_airfoil(param, value) : #Modifies the .json input file to change the airfoil
+	global muAirplane
+	if not (param in ['alpha_L0', 'CL_alpha', 'Cm_L0', 'Cm_alpha', 'CD0', 'CD0_L', 'CD0_L2', 'CL_max']) :
+		print 'Wrong parameter name'
+		return 1
+	with open(filename, 'r+') as f :
+		data = json.load(f, object_pairs_hook=OrderedDict)
+		data['wings']['Wing_1']['airfoils']['af1']['properties'][param] = value
+		data['wings']['Wing_1']['airfoils']['af2']['properties'][param] = value
+		f.seek(0)
+		json.dump(data, f, indent=4)
+		f.truncate()
+	muAirplane = MU.MachUp(filename)
+	return 0
+
+
 def solve_all(param, min, max, points):
+	global all_results
 	
 	if not (param in ['aileron', 'elevator', 'rudder', 'flap', 'Vmag', 'alpha', 'beta', 'rho', 
-					'sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset']) :
+					'sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset',
+					'alpha_L0', 'CL_alpha', 'Cm_L0', 'Cm_alpha', 'CD0', 'CD0_L', 'CD0_L2', 'CL_max']) :
 		print 'Wrong parameter name'
 		return 1
 		
@@ -120,6 +150,10 @@ def solve_all(param, min, max, points):
 		if param in ['sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset'] :
 			update_geometry(param, i)
 			solve_once()
+		if param in ['alpha_L0', 'CL_alpha', 'Cm_L0', 'Cm_alpha', 'CD0', 'CD0_L', 'CD0_L2', 'CL_max'] :
+			update_airfoil(param, i)
+			solve_once()
+		all_results[len(all_results)-1]['value'] = i
 	return 0
 
 def plot_data(data): # prints a plot of a list of data against another (['CL', 'alpha'] gives CL against alpha)
@@ -138,7 +172,8 @@ def plot_data(data): # prints a plot of a list of data against another (['CL', '
 		list_data_y = []
 		for j in range(len(all_results)):
 			list_data_y.append(all_results[j][d[0]])
-			list_data_x.append(all_results[j][d[1]])
+			# list_data_x.append(all_results[j][d[1]])
+			list_data_x.append(all_results[j]['value'])
 		
 		plt.figure(i)
 		i = i+1
@@ -150,20 +185,20 @@ def plot_data(data): # prints a plot of a list of data against another (['CL', '
 	plt.show()
 	return 0
 
-def study(param, min, max, points, *data): #Calculates and display results for chosen parameter
+def study(param, min, max, points, data): #Calculates and display results for chosen parameter
 	#Parameter can be 'aileron', 'elevator', 'rudder', 'flap', 'Vmag', 'alpha', 'beta', 'rho',
-	#					'sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset'
-	#Data can be 'CL', 'CD', 'FL', 'FD', 'FS', 'FX', 'FY', 'FZ', 'MX', 'MY', 'MZ'
+	#					'sweep', 'span', 'dihedral', 'tip_chord', 'mounting_angle', 'washout', 'root_chord', 'yoffset',
+	#					'alpha_L0', 'CL_alpha', 'Cm_L0', 'Cm_alpha', 'CD0', 'CD0_L', 'CD0_L2', 'CL_max'
+	#Data can be 'CL', 'CD', 'L/D', 'FL', 'FD', 'FS', 'FX', 'FY', 'FZ', 'MX', 'MY', 'MZ'
 	#You can input multiple data
 	solve_all(param, min, max, points)
 	plots_list = []
 	for d in data :
 		plots_list.append([d, param])
 	plot_data(plots_list)
-	
-	
-	
-study('sweep', 0, 50, 101, 'CL', 'CD', 'FL', 'FD')
+
+
+study('alpha', 1, 20, 20, ['CL', 'CD', 'L/D'])
 
 
 with open(filename, 'r+') as f : #Restore file to its original state

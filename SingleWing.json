@@ -71,8 +71,8 @@
                 "af1": {
                     "properties": {
                         "type": "linear", 
-                        "alpha_L0": -0.036899751, 
-                        "CL_alpha": 6.283185307, 
+                        "alpha_L0": -0.0169, 
+                        "CL_alpha": 1.0, 
                         "Cm_L0": -0.0527, 
                         "Cm_alpha": -0.08, 
                         "CD0": 0.0055, 
@@ -84,8 +84,8 @@
                 "af2": {
                     "properties": {
                         "type": "linear", 
-                        "alpha_L0": -0.036899751, 
-                        "CL_alpha": 6.283185307, 
+                        "alpha_L0": -0.0169, 
+                        "CL_alpha": 1.0, 
                         "Cm_L0": -0.0527, 
                         "Cm_alpha": -0.08, 
                         "CD0": 0.0055, 
