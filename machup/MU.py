@@ -555,7 +555,8 @@ class MachUp:
             if aero_state:
                 a0 = aero_state.get("alpha",0.) 
                 a = 0.
-                while True:
+                # while True:
+                for i in range(3600) :
                     aero_state["alpha"] = a
                     results = self.solve(aero_state,control_state,prop_state)
                     stall_info = self.myllmodel._find_stall_location()
@@ -563,7 +564,7 @@ class MachUp:
                         stall_info["alpha"] = round(a,2)
                         stall_info["lift"] = results["FL"]
                         return stall_info
-                    a+=0.1
+                    a+=0.1 # Increment
             else:
                 aero_state = {"V_mag":10,
                               "rho":0.0023769,
@@ -572,7 +573,9 @@ class MachUp:
             if filename:
                 with open(filename, 'w') as outfile:
                     json.dump(stall_info, outfile,indent = 4)
-                return stall_info
+            stall_info["alpha"] = 0
+            stall_info["lift"] = 0
+            return stall_info
         else:
             raise RuntimeError("Current model does not have wings to stall")
 

@@ -1,11 +1,11 @@
 {
     "tag": {
-        "UUID": "E6CCAA89-E4D4-410D-A400-623F709AC952", 
-        "date": "2018-03-19T19:37:50.133Z", 
+        "UUID": "F159FB82-9A4F-46E2-A171-4278E1DF2E2C", 
+        "date": "2018-03-21T20:06:01.119Z", 
         "version": "MachUp 4.0"
     }, 
     "run": {
-        "forces": ""
+        "stallonset": ""
     }, 
     "solver": {
         "type": "linear", 
@@ -13,7 +13,7 @@
         "relaxation": 0.9
     }, 
     "plane": {
-        "name": "SingleWing", 
+        "name": "MyAirplane", 
         "CGx": 0, 
         "CGy": 0, 
         "CGz": 0
@@ -72,7 +72,7 @@
                     "properties": {
                         "type": "linear", 
                         "alpha_L0": -0.0169, 
-                        "CL_alpha": 1.0, 
+                        "CL_alpha": 0.0, 
                         "Cm_L0": -0.0527, 
                         "Cm_alpha": -0.08, 
                         "CD0": 0.0055, 
@@ -85,7 +85,7 @@
                     "properties": {
                         "type": "linear", 
                         "alpha_L0": -0.0169, 
-                        "CL_alpha": 1.0, 
+                        "CL_alpha": 0.0, 
                         "Cm_L0": -0.0527, 
                         "Cm_alpha": -0.08, 
                         "CD0": 0.0055, 
@@ -96,7 +96,20 @@
                 }
             }, 
             "grid": 40, 
-            "control": {}, 
+            "control": {
+                "has_control_surface": true, 
+                "span_root": 0, 
+                "span_tip": 1, 
+                "chord_root": 0.2, 
+                "chord_tip": 0.2, 
+                "is_sealed": 1, 
+                "mix": {
+                    "elevator": 0, 
+                    "rudder": 0, 
+                    "aileron": 0, 
+                    "flap": 1
+                }
+            }, 
             "sameAsRoot": true
         }
     }
