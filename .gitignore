@@ -7,6 +7,7 @@ build/
 !*.F90
 !*.py
 !*.json
+!*.mu
 !.gitignore
 !.pylintrc
 !CMakeLists.txt

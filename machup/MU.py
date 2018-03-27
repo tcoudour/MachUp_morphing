@@ -573,6 +573,7 @@ class MachUp:
             if filename:
                 with open(filename, 'w') as outfile:
                     json.dump(stall_info, outfile,indent = 4)
+            stall_info = {}
             stall_info["alpha"] = 0
             stall_info["lift"] = 0
             return stall_info
