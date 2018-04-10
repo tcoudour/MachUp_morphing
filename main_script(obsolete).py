@@ -14,7 +14,7 @@ from os import remove, rename
 
 
 # filename = "SingleWingFlapTest.json" # input file
-filename = "TwoWings.json" # input file
+filename = "SingleWingFlapTest.json" # input file
 temp_filename = "temp_data.json" # name for a copy of the input file that will be modified if necessary.
 copy(filename, temp_filename) # copy input file
 
@@ -279,7 +279,8 @@ def study(param, points, data, stall_points = False): #Calculates and display re
 		exit('Too many parameters')
 
 
-study([['CL_alpha', 0, 10]], 100 , ['CL', 'CD'])
+# study([['alpha', 0, 50]], 100 , ['CL', 'CD'])
+study([['flap', 0, 50]], 20 , ['STALL_ANGLE'])
 
 # ''' TESTING '''
 # control_state = {"aileron": aileron_def, "elevator": elevator_def, "rudder": rudder_def, "flap": 0}

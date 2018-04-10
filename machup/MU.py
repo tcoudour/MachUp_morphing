@@ -715,7 +715,7 @@ class MachUp:
         stab_deriv["static_margin"] = -stab_deriv["Cm_a"]/stab_deriv["CL_a"]
         cont_deriv = self.control_derivatives(aero_state,control_state,prop_state)
         damp_deriv = self.damping_derivatives(aero_state,control_state,prop_state)
-        #all_derivatives = {**stab_deriv,**cont_deriv,**damp_deriv}
+        # all_derivatives = {**stab_deriv,**cont_deriv,**damp_deriv}
         all_derivatives = {stab_deriv,cont_deriv,damp_deriv}
 
 

@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numpy import cos as c
 from numpy import sin as s
-#from stl import mesh
-import stl
+from stl import mesh
+# import stl
 from scipy.interpolate import interp1d
 
 
