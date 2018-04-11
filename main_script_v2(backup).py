@@ -65,12 +65,6 @@ def add_states(parameters_list , points) :
               + str(round(time.time()-time_begin, 1)) 
               + ' s, now generating state ' + str(i), end = '\r')
 
-        # temp_state = {
-            # 'n' : Model_states[-1]['n']+1,
-            # 'control_state' : deepcopy(default_control_state),
-            # 'aero_state' : deepcopy(default_aero_state),
-            # 'weight' : weight
-        # }
         temp_state = deepcopy(last_state)
         temp_state['n'] = Model_states[-1]['n']+1
         
@@ -637,7 +631,7 @@ plot_2D(['alpha', 'beta', 'CL'])
     # list_x.append(n['aero_state']['alpha'])
     # list_y.append(n['control_state']['flap'])
     # list_c.append(n['results']['CL'])
-    
+
 # plt.pcolormesh(list_x, list_y, list_c)
 # plt.scatter(list_x, list_y, c=list_c)
 # plt.colorbar()
